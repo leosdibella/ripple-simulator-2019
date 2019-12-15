@@ -3,4 +3,19 @@ body, html {
     height: 100%;
     background-color: #000000;
     margin: 0;
+    overflow: hidden;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.title {
+    color: #ffffff;
+    font-size: 4rem;
+    pointer-events: none;
+    user-select: none;
 }

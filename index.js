@@ -2,9 +2,7 @@
     'use strict';
 
     const ripples = [];
-    const numberOfCrests = 10;
-    const dyingFrame = 750;
-    const rippleDelay = 10;
+    const rippleDelay = 2;
     let animationFrame = -1;
 
     function generateRandomInteger(lowerBound = 0, upperBound = 1) {
@@ -19,7 +17,7 @@
         ];
     }
 
-    function generateElements() {
+    function generateElements(numberOfCrests) {
         const elements = [];
 
         for (let i = 0; i < numberOfCrests; ++i) {
@@ -34,8 +32,9 @@
         return elements;
     }
 
-    function Ripple(x, y, color, frame) {
-        this.elements = generateElements();
+    function Ripple(x, y, color, frame, numberOfCrests, dyingNumber) {
+        this.dyingFrame = dyingNumber * frame;
+        this.elements = generateElements(numberOfCrests);
         this.frame = frame;
 
         this.advance = function () {
@@ -45,7 +44,7 @@
                 }
             }
 
-            if (this.frame === dyingFrame) {
+            if (this.frame === this.dyingFrame) {
                 for (let i = 0; i < numberOfCrests; ++i) {
                     document.body.removeChild(this.elements[i]);
                 }
@@ -61,11 +60,11 @@
                     this.elements[i].style.left = (x - positionCorrection) + 'px';
                     this.elements[i].style.width = dimension + 'px';
                     this.elements[i].style.height = dimension + 'px';
-                    this.elements[i].style.border = modifier + 'px rgb(' + color.join() + ') double';
+                    this.elements[i].style.border = modifier + 'px rgba(' + color.join() + ',' + ((this.dyingFrame - this.frame * frame) / this.dyingFrame) + ') double';
                 }
             }
 
-            this.frame += 10;
+            this.frame += frame;
         }
 
         this.isTerminal = function () {
@@ -88,11 +87,13 @@
     }
 
     function generateRipple(event) {
-        const random = generateRandomInteger(2, 5);
+        const numberOfRipples = generateRandomInteger(5, 10);
+        const numberOfCrests = generateRandomInteger(3, 5);
+        const dyingNumber = generateRandomInteger(150, 300);
         const color = generateRandomColor();
 
-        for (let i = 0; i < random; ++i){
-            ripples.push(new Ripple(event.offsetX, event.offsetY, color, i * rippleDelay));
+        for (let i = 0; i < numberOfRipples; ++i){
+            ripples.push(new Ripple(event.offsetX, event.offsetY, color, i * rippleDelay, numberOfCrests, dyingNumber));
         }
 
         if (animationFrame === -1) {
